@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.xingray</groupId>
+    <artifactId>javafx-graalvm-maven-plugin</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>maven-plugin</packaging>
+
+    <name>javafx-graalvm</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+
+        <!-- maven 相关的库要设置为 provided ，运行maven程序时，maven自带这些类库， scope设置为provided可以避免冲突 类似于 tomcat 中的servlet-api-->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>3.8.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.8.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.8.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xingray</groupId>
+            <artifactId>graalvm-substrate</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!--   <dependency>
+               <groupId>org.apache.maven</groupId>
+               <artifactId>maven-core</artifactId>
+               <version>4.0.0-alpha-4</version>
+               <scope>provided</scope>
+           </dependency>-->
+
+
+
+
+        <!--<dependency>
+            <groupId>com.xingray</groupId>
+            <artifactId>java-maven-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>-->
+
+    </dependencies>
+
+</project>
