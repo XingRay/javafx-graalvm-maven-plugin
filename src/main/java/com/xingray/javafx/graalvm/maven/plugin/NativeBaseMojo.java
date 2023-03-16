@@ -1,335 +1,86 @@
 package com.xingray.javafx.graalvm.maven.plugin;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.model.Dependency;
+import com.xingray.javafx.graalvm.maven.plugin.configuration.*;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class NativeBaseMojo extends AbstractMojo {
 
-    private static final List<String> ALLOWED_DEPENDENCY_TYPES = Collections.singletonList("jar");
+    @Parameter(name = "common")
+    private CommonConfiguration common;
 
-    Path outputDir;
+    @Parameter(name = "common")
+    private WindowsConfiguration windows;
+    @Parameter(name = "common")
+    private LinuxConfiguration linux;
+
+    @Parameter(name = "common")
+    private MacosConfiguration macos;
+
+    @Parameter(name = "common")
+    private WebConfiguration web;
+
+    @Parameter(name = "common")
+    private AndroidConfiguration android;
+
+    @Parameter(name = "common")
+    private IosConfiguration ios;
 
     @Parameter(defaultValue = "${project}", readonly = true)
 //    MavenProject project;
-    String project;
+    private String project;
 
-//    @Parameter(defaultValue = "${session}", readonly = true)
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/pom.xml")
+    private String pom;
+
+    //    @Parameter(defaultValue = "${session}", readonly = true)
 //    MavenSession session;
-    String session;
+    private String session;
 
-//    @Component
+    //    @Component
 //    BuildPluginManager pluginManager;
-    String pluginManager;
+    private String pluginManager;
+
+    /**
+     * The execution ID as defined in the POM.
+     */
+//    @Parameter(defaultValue = "${mojoExecution}", readonly = true)
+//    private MojoExecution execution;
 
     @Parameter(readonly = true, required = true, defaultValue = "${basedir}")
     File basedir;
 
-    private static final String PROPERTY_PREFIX = Constants.PLUGIN_NAME;
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/runPom.xml")
+    String runPom;
 
-    @Parameter(property = PROPERTY_PREFIX + ".graalvmHome")
-    String graalvmHome;
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().info(getClass().getName() + "execute()");
+        getLog().debug(getClass().getName() + "execute()"
+                + "\n");
 
-    @Parameter(property = PROPERTY_PREFIX + ".javaStaticSdkVersion")
-    String javaStaticSdkVersion;
-
-    @Parameter(property = PROPERTY_PREFIX + ".javafxStaticSdkVersion")
-    String javafxStaticSdkVersion;
-
-    @Parameter(property = PROPERTY_PREFIX + ".target", defaultValue = "host")
-    String target;
-
-    @Parameter(property = PROPERTY_PREFIX + ".bundlesList")
-    List<String> bundlesList;
-
-    @Parameter(property = PROPERTY_PREFIX + ".resourcesList")
-    List<String> resourcesList;
-
-    @Parameter(property = PROPERTY_PREFIX + ".reflectionList")
-    List<String> reflectionList;
-
-    @Parameter(property = PROPERTY_PREFIX + ".jniList")
-    List<String> jniList;
-
-    @Parameter(property = PROPERTY_PREFIX + ".nativeImageArgs")
-    List<String> nativeImageArgs;
-
-    @Parameter(property = PROPERTY_PREFIX + ".linkerArgs")
-    List<String> linkerArgs;
-
-    @Parameter(property = PROPERTY_PREFIX + ".runtimeArgs")
-    List<String> runtimeArgs;
-
-    @Parameter(property = PROPERTY_PREFIX + ".mainClass", required = true)
-    String mainClass;
-
-    @Parameter(property = PROPERTY_PREFIX + ".executable", defaultValue = "java")
-    String executable;
-
-    @Parameter(property = PROPERTY_PREFIX + ".verbose", defaultValue = "false")
-    String verbose;
-
-    @Parameter(property = PROPERTY_PREFIX + ".attachList")
-    List<String> attachList;
-
-    @Parameter(property = PROPERTY_PREFIX + ".enableSWRendering", defaultValue = "false")
-    String enableSWRendering;
-
-    @Parameter(property = PROPERTY_PREFIX + ".remoteHostName")
-    String remoteHostName;
-
-    @Parameter(property = PROPERTY_PREFIX + ".remoteDir")
-    String remoteDir;
-
-    @Parameter(property = PROPERTY_PREFIX + ".appIdentifier")
-    String appIdentifier;
-
-    @Parameter(property = PROPERTY_PREFIX + ".releaseConfiguration")
-    ReleaseConfiguration releaseConfiguration;
-
-//    private ProcessDestroyer processDestroyer;
-
-//    public SubstrateDispatcher createSubstrateDispatcher() throws IOException, MojoExecutionException {
-//        if (getGraalvmHome().isEmpty()) {
-//            throw new MojoExecutionException("GraalVM installation directory not found." +
-//                    " Either set GRAALVM_HOME as an environment variable or" +
-//                    " set graalvmHome in " + JavafxGraalvmMavenPluginConstants.PLUGIN_NAME + "-plugin configuration");
-//        }
-//        outputDir = Path.of(JavafxGraalvmMavenPluginConstants.OUTPUT_DIR);/*Path.of(project.getBuild().getDirectory(), JavafxGraalvmMavenPluginConstants.OUTPUT_DIR);*/
-//        ProjectConfiguration substrateConfiguration = createSubstrateConfiguration();
-//        return new SubstrateDispatcher(outputDir, substrateConfiguration);
-//    }
-
-//    private ProjectConfiguration createSubstrateConfiguration() {
-//        ProjectConfiguration clientConfig = new ProjectConfiguration(mainClass, getProjectClasspath());
-//
-//        clientConfig.setGraalPath(Path.of(getGraalvmHome().get()));
-//        clientConfig.setJavaStaticSdkVersion(javaStaticSdkVersion);
-//        clientConfig.setJavafxStaticSdkVersion(javafxStaticSdkVersion);
-//
-//        Triplet targetTriplet;
-//        switch (target) {
-//            case Constants.PROFILE_HOST:
-//                targetTriplet = Triplet.fromCurrentOS();
-//                break;
-//            case Constants.PROFILE_IOS:
-//                targetTriplet = new Triplet(Constants.Profile.IOS);
-//                break;
-//            case Constants.PROFILE_IOS_SIM:
-//                targetTriplet = new Triplet(Constants.Profile.IOS_SIM);
-//                break;
-//            case Constants.PROFILE_ANDROID:
-//                targetTriplet = new Triplet(Constants.Profile.ANDROID);
-//                break;
-//            case Constants.PROFILE_LINUX_AARCH64:
-//                targetTriplet = new Triplet(Constants.Profile.LINUX_AARCH64);
-//                break;
-//            case Constants.PROFILE_WEB:
-//                targetTriplet = new Triplet(Constants.Profile.WEB);
-//                break;
-//            default:
-//                throw new RuntimeException("No valid target found for " + target);
-//        }
-//        if (releaseConfiguration != null) {
-//            clientConfig.setReleaseConfiguration(releaseConfiguration.toSubstrate());
-//        }
-//        clientConfig.setTarget(targetTriplet);
-//
-//        clientConfig.setBundlesList(bundlesList);
-//        clientConfig.setResourcesList(resourcesList);
-//        clientConfig.setJniList(jniList);
-//        clientConfig.setCompilerArgs(nativeImageArgs);
-//        clientConfig.setLinkerArgs(linkerArgs);
-//        clientConfig.setRuntimeArgs(runtimeArgs);
-//        clientConfig.setReflectionList(reflectionList);
-////        clientConfig.setAppId(appIdentifier != null ? appIdentifier : project.getGroupId() + "." + project.getArtifactId());
-////        clientConfig.setAppName(project.getName());
-//        clientConfig.setVerbose("true".equals(verbose));
-//        clientConfig.setUsePrismSW("true".equals(enableSWRendering));
-//        clientConfig.setRemoteHostName(remoteHostName);
-//        clientConfig.setRemoteDir(remoteDir);
-//
-//        return clientConfig;
-//    }
-
-//    ProcessDestroyer getProcessDestroyer() {
-//        if (processDestroyer == null) {
-//            processDestroyer = new ShutdownHookProcessDestroyer();
-//        }
-//        return processDestroyer;
-//    }
-
-    private String getProjectClasspath() {
-        List<File> classPath = getClasspathElements(project);
-        getLog().debug("classPath = " + classPath);
-        return classPath.stream()
-                .map(File::getAbsolutePath)
-                .collect(Collectors.joining(File.pathSeparator));
-    }
-
-    private List<File> getClasspathElements(/*MavenProject*/String project) {
-//        List<Repository> repositories = project.getRepositories();
-//        Repository gluonRepository = new Repository();
-//        gluonRepository.setId("Gluon");
-//        gluonRepository.setUrl("https://nexus.gluonhq.com/nexus/content/repositories/releases");
-//        repositories.add(gluonRepository);
-//        MavenArtifactResolver.initRepositories(repositories);
-
-
-        List<File> list = new ArrayList<>();
-//        List<File> list = project.getArtifacts().stream()
-//                .filter(d -> ALLOWED_DEPENDENCY_TYPES.stream().anyMatch(t -> t.equals(d.getType())))
-//                .sorted((a1, a2) -> {
-//                    int compare = a1.compareTo(a2);
-//                    if (compare == 0) {
-//                        // give precedence to classifiers
-//                        return a1.hasClassifier() ? 1 : (a2.hasClassifier() ? -1 : 0);
-//                    }
-//                    return compare;
-//                })
-//                .map(new Function<Artifact, File>() {
-//                    @Override
-//                    public File apply(Artifact artifact) {
-//                        return null;
-//                    }
-//                })
-//                .collect(Collectors.toList());
-//        list.add(0, new File(project.getBuild().getOutputDirectory()));
-//
-//        // include runtime dependencies
-//        getRuntimeDependencies().stream()
-//                .filter(d -> !list.contains(d))
-//                .forEach(list::add);
-//
-//        // remove provided dependencies
-//        getProvidedDependencies().stream()
-//                .filter(list::contains)
-//                .forEach(list::remove);
-
-        // WEB
-//        if (Constants.PROFILE_WEB.equals(target)) {
-//            project.getArtifacts().stream()
-//                    .filter(artifact -> "org.openjfx".equals(artifact.getGroupId()) && artifact.getClassifier() != null)
-//                    .map(a -> {
-//                        return new org.apache.maven.artifact.DefaultArtifact(a.getGroupId(), a.getArtifactId(),
-//                                Constants.WEB_AOT_CLASSIFIER, "jar", Constants.DEFAULT_JAVAFX_JS_SDK_VERSION);
-//                    })
-//                    .flatMap(artifact -> {
-//                        DependencyFilter exclusions = (node, parents) ->
-//                                !node.getArtifact().getClassifier().equals(Constants.WEB_AOT_CLASSIFIER);
-//                        Set<Artifact> resolve = MavenArtifactResolver.getInstance().resolve(artifact, exclusions);
-//                        if (resolve == null) {
-//                            return Stream.empty();
-//                        }
-//                        return resolve.stream();
-//                        return Stream.empty();
-//                    })
-//                    .distinct()
-//                    .map(Artifact::getFile)
-//                    .forEach(list::add);
-
-//            WebTargetConfiguration.WEB_AOT_DEPENDENCIES.stream()
-//                    .map(s -> s.split(":"))
-//                    .map(a -> new DefaultArtifact(a[0], a[1],
-//                            a.length == 4 ? a[3] : null, "jar", a[2]))
-//                    .flatMap(a -> {
-//                        Set<Artifact> resolve = MavenArtifactResolver.getInstance().resolve(a);
-//                        if (resolve == null) {
-//                            return Stream.empty();
-//                        }
-//                        return resolve.stream();
-//                    })
-//                    .distinct()
-//                    .map(Artifact::getFile)
-//                    .forEach(list::add);
-//        }
-        return list;
-    }
-
-    private List<File> getRuntimeDependencies() {
-        return getDependencies("runtime");
-    }
-
-    private List<File> getProvidedDependencies() {
-        return getDependencies("provided");
-    }
-
-    private List<File> getDependencies(String scope) {
-        return new ArrayList<>();
-
-//        if (scope == null || scope.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//        return project.getDependencies().stream()
-//                .filter(dependency -> ALLOWED_DEPENDENCY_TYPES.stream().anyMatch(t -> t.equals(dependency.getType())))
-//                .filter(d -> scope.equals(d.getScope()))
-//                .map(NativeBaseMojo::dependencyToArtifact)
-//                .flatMap(artifact -> {
-//                    Set<Artifact> resolve = MavenArtifactResolver.getInstance().resolve(artifact);
-//                    if (resolve == null) {
-//                        return Stream.empty();
-//                    }
-//                    return resolve.stream();
-//                })
-//                .distinct()
-//                .map(Artifact::getFile)
-//                .collect(Collectors.toList());
-    }
-
-    private static Artifact dependencyToArtifact(Dependency dependency) {
-        String groupId = dependency.getGroupId();
-        String artifactId = dependency.getArtifactId();
-        String version = dependency.getVersion();
-        String scope = dependency.getScope();
-        String type = dependency.getType();
-        String classifier = dependency.getClassifier();
-        return new DefaultArtifact(groupId, artifactId, version, scope, type, classifier, null);
-    }
-
-    Optional<String> getGraalvmHome() {
-        return Optional.ofNullable(graalvmHome)
-                .or(() -> Optional.ofNullable(System.getenv("GRAALVM_HOME")));
     }
 
     @Override
     public String toString() {
         return "NativeBaseMojo{" +
-                "outputDir=" + outputDir +
-                ", project=" + project +
-                ", session=" + session +
-                ", pluginManager=" + pluginManager +
+                "common=" + common +
+                ", windows=" + windows +
+                ", linux=" + linux +
+                ", macos=" + macos +
+                ", web=" + web +
+                ", android=" + android +
+                ", ios=" + ios +
+                ", project='" + project + '\'' +
+                ", pom='" + pom + '\'' +
+                ", session='" + session + '\'' +
+                ", pluginManager='" + pluginManager + '\'' +
                 ", basedir=" + basedir +
-                ", graalvmHome='" + graalvmHome + '\'' +
-                ", javaStaticSdkVersion='" + javaStaticSdkVersion + '\'' +
-                ", javafxStaticSdkVersion='" + javafxStaticSdkVersion + '\'' +
-                ", target='" + target + '\'' +
-                ", bundlesList=" + bundlesList +
-                ", resourcesList=" + resourcesList +
-                ", reflectionList=" + reflectionList +
-                ", jniList=" + jniList +
-                ", nativeImageArgs=" + nativeImageArgs +
-                ", linkerArgs=" + linkerArgs +
-                ", runtimeArgs=" + runtimeArgs +
-                ", mainClass='" + mainClass + '\'' +
-                ", executable='" + executable + '\'' +
-                ", verbose='" + verbose + '\'' +
-                ", attachList=" + attachList +
-                ", enableSWRendering='" + enableSWRendering + '\'' +
-                ", remoteHostName='" + remoteHostName + '\'' +
-                ", remoteDir='" + remoteDir + '\'' +
-                ", appIdentifier='" + appIdentifier + '\'' +
-                ", releaseConfiguration=" + releaseConfiguration +
-//                ", processDestroyer=" + processDestroyer +
-                "} " + super.toString();
+                ", runPom='" + runPom + '\'' +
+                '}';
     }
 }

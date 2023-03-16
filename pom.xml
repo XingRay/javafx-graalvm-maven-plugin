@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
+        <java-common.version>1.0.0</java-common.version>
     </properties>
 
     <dependencies>
@@ -48,8 +49,14 @@
 
         <dependency>
             <groupId>com.xingray</groupId>
-            <artifactId>graalvm-substrate</artifactId>
+            <artifactId>graalvm-compiler-core</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xingray</groupId>
+            <artifactId>java-util</artifactId>
+            <version>${java-common.version}</version>
         </dependency>
 
         <!--   <dependency>

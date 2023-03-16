@@ -13,8 +13,6 @@ public class NativeSharedLibMojo extends NativeBaseMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().info("javafx-native-maven-plugin  NativeSharedLibMojo#execute()");
-        getLog().info(this.toString());
 
         boolean result = true;
 //        try {

@@ -1,16 +1,86 @@
-package com.xingray.javafx.graalvm.maven.plugin;
+package com.xingray.javafx.graalvm.maven.plugin.configuration;
 
-public class ReleaseConfiguration {
+import com.xingray.javafx.graalvm.maven.plugin.Constants;
+import org.apache.maven.plugins.annotations.Parameter;
 
-    private static final String DEFAULT_DESCRIPTION = "Default description";
-    private static final String DEFAULT_VENDOR = "Unknown";
-    private static final String DEFAULT_VERSION = "1.0";
+import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
 
-    public static final String DEFAULT_MAC_APP_CATEGORY = "public.app-category.utilities";
-    public static final String DEFAULT_BUNDLE_VERSION = "1.0";
-    private static final String DEFAULT_BUNDLE_SHORT_VERSION = "1.0";
+public class CommonConfiguration {
 
-    private static final String DEFAULT_VERSION_CODE = "1";
+    private Path outputDir;
+
+
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".graalvmHome")
+    private String graalvmHome;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".javaStaticSdkVersion")
+    String javaStaticSdkVersion;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".javafxStaticSdkVersion")
+    String javafxStaticSdkVersion;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".target", defaultValue = "host")
+    String target;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".bundlesList")
+    List<String> bundlesList;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".resourcesList")
+    List<String> resourcesList;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".reflectionList")
+    List<String> reflectionList;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".jniList")
+    List<String> jniList;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".nativeImageArgs")
+    List<String> nativeImageArgs;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".linkerArgs")
+    List<String> linkerArgs;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".runtimeArgs")
+    List<String> runtimeArgs;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".mainClass", required = true)
+    String mainClass;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".executable", defaultValue = "java")
+    String executable;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".verbose", defaultValue = "false")
+    String verbose;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".attachList")
+    List<String> attachList;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".enableSWRendering", defaultValue = "false")
+    String enableSWRendering;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".remoteHostName")
+    String remoteHostName;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".remoteDir")
+    String remoteDir;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".appIdentifier")
+    String appIdentifier;
+
+    @Parameter(property = Constants.PLUGIN_NAME + ".releaseConfiguration")
+    CommonConfiguration commonConfiguration;
+
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/src/main/resources/META-INF/native-image")
+    String agentDir;
+
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/src/main/resources/META-INF/native-image/filter-file.json")
+    String agentFilter;
+
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/agentPom.xml")
+    String agentPom;
 
     /**
      * Type of package bundle that can be generated.
@@ -176,7 +246,7 @@ public class ReleaseConfiguration {
      */
     private String providedKeyAliasPassword;
 
-    public ReleaseConfiguration() {
+    public CommonConfiguration() {
     }
 
     public void setPackageType(String packageType) {

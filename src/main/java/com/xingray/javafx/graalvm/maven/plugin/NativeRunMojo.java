@@ -9,8 +9,6 @@ public class NativeRunMojo extends NativeBaseMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().info("javafx-native-maven-plugin  NativeRunMojo#execute()");
-        getLog().info(this.toString());
 
 //        try {
 //            SubstrateDispatcher dispatcher = createSubstrateDispatcher();

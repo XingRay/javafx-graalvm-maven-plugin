@@ -1,6 +1,6 @@
 package com.xingray.javafx.graalvm.maven.plugin;
 
-//import com.xingray.java.maven.core.io.JacksonMavenConverter;
+
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -8,7 +8,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.invoker.*;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -27,18 +26,8 @@ import java.util.stream.Collectors;
         aggregator = true)
 public class NativeBuildMojo extends NativeBaseMojo {
 
-    /**
-     * D:\code\demo\javafx\javafx-graalvm/pom.xml
-     */
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/pom.xml")
-    String pom;
-
+    @Override
     public void execute() throws MojoExecutionException {
-        getLog().info("javafx-native-maven-plugin  NativeBuildMojo#execute()");
-        getLog().info(this.toString());
-        getLog().info("pom:" + pom);
-//        JacksonMavenConverter converter = new JacksonMavenConverter();
-        getLog().info("start to read pom file");
         File pomFile = new File(this.pom);
 
         try {
@@ -88,31 +77,6 @@ public class NativeBuildMojo extends NativeBaseMojo {
     public String toString() {
         return "NativeBuildMojo{" +
                 "pom='" + pom + '\'' +
-                ", outputDir=" + outputDir +
-                ", project=" + project +
-                ", session=" + session +
-                ", pluginManager=" + pluginManager +
-                ", basedir=" + basedir +
-                ", graalvmHome='" + graalvmHome + '\'' +
-                ", javaStaticSdkVersion='" + javaStaticSdkVersion + '\'' +
-                ", javafxStaticSdkVersion='" + javafxStaticSdkVersion + '\'' +
-                ", target='" + target + '\'' +
-                ", bundlesList=" + bundlesList +
-                ", resourcesList=" + resourcesList +
-                ", reflectionList=" + reflectionList +
-                ", jniList=" + jniList +
-                ", nativeImageArgs=" + nativeImageArgs +
-                ", linkerArgs=" + linkerArgs +
-                ", runtimeArgs=" + runtimeArgs +
-                ", mainClass='" + mainClass + '\'' +
-                ", executable='" + executable + '\'' +
-                ", verbose='" + verbose + '\'' +
-                ", attachList=" + attachList +
-                ", enableSWRendering='" + enableSWRendering + '\'' +
-                ", remoteHostName='" + remoteHostName + '\'' +
-                ", remoteDir='" + remoteDir + '\'' +
-                ", appIdentifier='" + appIdentifier + '\'' +
-                ", releaseConfiguration=" + releaseConfiguration +
-                "} ";
+                "} " + super.toString();
     }
 }

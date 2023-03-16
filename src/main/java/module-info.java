@@ -5,6 +5,9 @@ module com.xingray.javafx.graalvm.maven.plugin {
     requires maven.artifact;
     requires maven.invoker;
 
-//    requires com.xingray.java.maven.core;
+    requires com.xingray.java.util;
+    requires com.xingray.graalvm.compiler.core;
+    requires com.xingray.graalvm.compiler.common;
+
     requires plexus.utils;
 }

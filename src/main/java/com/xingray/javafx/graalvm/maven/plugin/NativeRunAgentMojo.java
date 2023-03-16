@@ -11,31 +11,6 @@ import java.util.List;
 @Execute(phase = LifecyclePhase.PROCESS_CLASSES)
 public class NativeRunAgentMojo extends NativeBaseMojo {
 
-    private static final String AGENTLIB_NATIVE_IMAGE_AGENT_STRING =
-            "-agentlib:native-image-agent=access-filter-file=src/main/resources/META-INF/native-image/filter-file.json,config-merge-dir=src/main/resources/META-INF/native-image";
-
-    private static final List<String> AGENTLIB_EXCLUSION_RULES = Arrays.asList(
-            "com.sun.glass.ui.mac.*",
-            "com.sun.glass.ui.gtk.*",
-            "com.sun.glass.ui.win.*",
-            "com.sun.prism.es2.*",
-            "com.sun.prism.d3d.*",
-            "com.sun.scenario.effect.impl.es2.*",
-            "com.sun.scenario.effect.impl.hw.d3d.*"
-    );
-
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/pom.xml")
-    String pom;
-
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/src/main/resources/META-INF/native-image")
-    String agentDir;
-
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/src/main/resources/META-INF/native-image/filter-file.json")
-    String agentFilter;
-
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/agentPom.xml")
-    String agentPom;
-
     @Override
     public void execute() throws MojoExecutionException {
 //        getLog().debug("javafx-native-maven-plugin  NativeRunAgentMojo#execute()");
@@ -171,7 +146,7 @@ public class NativeRunAgentMojo extends NativeBaseMojo {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(agentDirFilter)))) {
             bw.write("{ \"rules\": [\n");
             boolean ruleHasBeenWritten = false;
-            for (String rule : AGENTLIB_EXCLUSION_RULES) {
+            for (String rule : Constants.AGENTLIB_EXCLUSION_RULES) {
                 if (ruleHasBeenWritten) {
                     bw.write(",\n");
                 } else {

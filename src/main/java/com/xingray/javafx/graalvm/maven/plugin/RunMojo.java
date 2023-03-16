@@ -7,22 +7,8 @@ import org.apache.maven.plugins.annotations.*;
 @Execute(phase = LifecyclePhase.PROCESS_CLASSES)
 public class RunMojo extends NativeBaseMojo {
 
-    /**
-     * The execution ID as defined in the POM.
-     */
-//    @Parameter(defaultValue = "${mojoExecution}", readonly = true)
-//    private MojoExecution execution;
-
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/pom.xml")
-    String pom;
-
-    @Parameter(readonly = true, required = true, defaultValue = "${basedir}/runPom.xml")
-    String runPom;
-
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().info("javafx-native-maven-plugin  RunMojo#execute()");
-        getLog().info(this.toString());
 
 //        final InvocationRequest invocationRequest = new DefaultInvocationRequest();
 //        invocationRequest.setProfiles(project.getActiveProfiles().stream()

@@ -9,8 +9,6 @@ public class NativeInstallMojo extends NativeBaseMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().info("javafx-native-maven-plugin  NativeInstallMojo#execute()");
-        getLog().info(this.toString());
 
         boolean result = true;
 //        try {
